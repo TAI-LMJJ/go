@@ -4,6 +4,9 @@ import { z } from "zod";
 
 const routeEntrySchema = z.tuple([z.string(), z.string()]).array();
 
+// Routes that cannot be overridden
+const reservedRoutes = ["/", "/favicon.ico"];
+
 /**
  * Get route entries from the spreadsheet
  */
@@ -15,5 +18,10 @@ export default async function getRoutes() {
     range: "Routes!A2:B",
   });
   const routePairs = routeEntrySchema.parse(response.data.values);
-  return routePairs;
+
+  // Filter out reserved routes
+  const filtered = routePairs.filter(
+    ([path]) => !reservedRoutes.includes(path)
+  );
+  return filtered;
 }

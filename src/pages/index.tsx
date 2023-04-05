@@ -13,7 +13,7 @@ export default function Home() {
         <title>t-ai Go Routes</title>
         <meta name="description" content="t-AI URL shortener" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.png" />
+        <link rel="icon" href="/favicon.ico" />
       </Head>
       <main className={styles.main}>
         <p className={clsx(inter.className, styles.heading)}>
