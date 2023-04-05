@@ -1,4 +1,4 @@
-import getRoutes from "@/util/getRoutes";
+import { getDestination } from "@/util/routes";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
 
@@ -9,14 +9,10 @@ export default async function handler(
   const { path: basePath } = req.query;
   // Get first path
   const path = z.string().array().parse(basePath)[0];
+  const route = await getDestination(path);
 
-  const routeEntries = await getRoutes();
-
-  const match = routeEntries.find(
-    ([entryPath]) => path === entryPath.substring(1) // Remove leading slash
-  );
-  if (match) {
-    return res.redirect(match[1]);
+  if (route != null) {
+    return res.redirect(route);
   } else {
     return res.status(404).json({
       message: "Unknown route: " + path,
