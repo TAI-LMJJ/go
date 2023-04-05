@@ -8,7 +8,7 @@ export default async function handler(
 ) {
   const { path: basePath } = req.query;
   // Get first path
-  const path = z.string().array().parse(basePath)[0];
+  const path = "/" + z.string().array().parse(basePath)[0];
   const route = await getDestination(path);
 
   if (route != null) {

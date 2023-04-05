@@ -9,4 +9,5 @@ export default async function handler(
   res: NextApiResponse
 ) {
   await regenerateRoutes();
+  return res.status(200).json({ message: "Success" });
 }

@@ -2,6 +2,7 @@ import { google } from "googleapis";
 import getOAuthClient from "./authorize";
 import { z } from "zod";
 import { Redis } from "@upstash/redis";
+import getRedisClient from "./redis";
 
 const { SPREADSHEET_ID } = process.env;
 const routeEntrySchema = z.tuple([z.string(), z.string()]).array();
@@ -9,15 +10,11 @@ const routeEntrySchema = z.tuple([z.string(), z.string()]).array();
 // Routes that cannot be overridden
 const reservedRoutes = ["/", "/refresh", "/favicon.ico"];
 
-const redis = new Redis({
-  url: process.env.REDIS_URL,
-  token: process.env.REDIS_tOKEN,
-});
-
 /**
  * Get the destination route for a given path
  */
 export async function getDestination(path: string): Promise<string | null> {
+  const redis = await getRedisClient();
   return await redis.get<string>(path);
 }
 
@@ -25,6 +22,8 @@ export async function getDestination(path: string): Promise<string | null> {
  * Regenerate routes on Redis
  */
 export async function regenerateRoutes(): Promise<void> {
+  const redis = await getRedisClient();
+
   // Clear all routes
   await redis.flushall();
 
@@ -43,9 +42,9 @@ export async function regenerateRoutes(): Promise<void> {
   );
 
   // Update redis
-  const promises = [];
   for (const [path, destination] of filtered) {
-    promises.push(redis.set(path, destination));
+    console.log("Setting route", path, destination);
+    const value = await redis.set(path, destination);
+    console.log("Value", value);
   }
-  await Promise.all(promises);
 }
