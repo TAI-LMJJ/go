@@ -1,7 +1,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
 // Routes that cannot be overridden
-const reservedRoutes = ["/", "/refresh", "/favicon.ico"];
+const reservedRoutes = ["/", "/favicon.ico"];
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { path } = req.query;
