@@ -3,9 +3,15 @@ import getOAuthClient from "./authorize";
 import { z } from "zod";
 import { Redis } from "@upstash/redis";
 import getRedisClient from "./redis";
+import { GoogleSpreadsheet } from "google-spreadsheet";
 
 const { SPREADSHEET_ID } = process.env;
-const routeEntrySchema = z.tuple([z.string(), z.string()]).array();
+const routeEntrySchema = z
+  .object({
+    Route: z.string(),
+    Location: z.string(),
+  })
+  .array();
 
 // Routes that cannot be overridden
 const reservedRoutes = ["/", "/refresh", "/favicon.ico"];
@@ -27,24 +33,29 @@ export async function regenerateRoutes(): Promise<void> {
   // Clear all routes
   await redis.flushall();
 
-  // Pull routes from Sheets
-  const client = getOAuthClient();
-  const sheets = google.sheets({ version: "v4", auth: client });
-  const response = await sheets.spreadsheets.values.get({
-    spreadsheetId: SPREADSHEET_ID,
-    range: "Routes!A2:B",
+  // Initialize sheet
+  const doc = new GoogleSpreadsheet(SPREADSHEET_ID);
+
+  // Initialize auth
+  await doc.useServiceAccountAuth({
+    client_email: process.env.SERVICE_ACCOUNT_EMAIL!,
+    private_key: process.env.SERVICE_ACCOUNT_PRIVATE_KEY!,
   });
-  const routePairs = routeEntrySchema.parse(response.data.values);
+
+  // Load routes from sheet
+  await doc.loadInfo();
+  const sheet = doc.sheetsByTitle["Routes"];
+  await sheet.loadCells("A2:B");
+  const rows = await sheet.getRows();
+  const routePairs = routeEntrySchema.parse(rows);
 
   // Filter out reserved routes
   const filtered = routePairs.filter(
-    ([path]) => !reservedRoutes.includes(path)
+    ({ Route }) => !reservedRoutes.includes(Route)
   );
 
   // Update redis
-  for (const [path, destination] of filtered) {
-    console.log("Setting route", path, destination);
-    const value = await redis.set(path, destination);
-    console.log("Value", value);
+  for (const { Route, Location } of filtered) {
+    await redis.set(Route, Location);
   }
 }
