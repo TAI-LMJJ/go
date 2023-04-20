@@ -1,3 +1,4 @@
+import { getAnalyticsRedisClient } from "@/util/redis";
 import { getDestination } from "@/util/routes";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { z } from "zod";
@@ -12,7 +13,11 @@ export default async function handler(
   const route = await getDestination(path);
 
   if (route != null) {
-    return res.redirect(route);
+    res.redirect(route);
+
+    // Increment analytics counter
+    const analyticsClient = getAnalyticsRedisClient();
+    analyticsClient.incr(path);
   } else {
     return res.status(404).json({
       message: "Unknown route: " + path,

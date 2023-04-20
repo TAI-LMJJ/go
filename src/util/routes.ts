@@ -1,6 +1,6 @@
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { z } from "zod";
-import getRedisClient from "./redis";
+import { getRedisClient } from "./redis";
 
 const { SPREADSHEET_ID } = process.env;
 const routeEntrySchema = z
