@@ -7,7 +7,7 @@ import { z } from "zod";
 export default function getRedisClient() {
   const url = z.string().parse(process.env.REDIS_URL);
   return new Redis({
-    url: process.env.REDIS_URL,
+    url,
     token: process.env.REDIS_TOKEN,
   });
 }

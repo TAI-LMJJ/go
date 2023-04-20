@@ -1,9 +1,6 @@
-import { google } from "googleapis";
-import getOAuthClient from "./authorize";
-import { z } from "zod";
-import { Redis } from "@upstash/redis";
-import getRedisClient from "./redis";
 import { GoogleSpreadsheet } from "google-spreadsheet";
+import { z } from "zod";
+import getRedisClient from "./redis";
 
 const { SPREADSHEET_ID } = process.env;
 const routeEntrySchema = z
