@@ -13,11 +13,11 @@ export default async function handler(
   const route = await getDestination(path);
 
   if (route != null) {
-    res.redirect(route);
-
     // Increment analytics counter
     const analyticsClient = getAnalyticsRedisClient();
     await analyticsClient.incr(path);
+
+    res.redirect(route);
   } else {
     return res.status(404).json({
       message: "Unknown route: " + path,
