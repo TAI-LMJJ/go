@@ -17,7 +17,7 @@ export default async function handler(
 
     // Increment analytics counter
     const analyticsClient = getAnalyticsRedisClient();
-    analyticsClient.incr(path);
+    await analyticsClient.incr(path);
   } else {
     return res.status(404).json({
       message: "Unknown route: " + path,
