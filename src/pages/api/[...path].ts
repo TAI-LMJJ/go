@@ -1,13 +1,13 @@
-import { getAnalyticsRedisClient } from "@/util/redis";
 import { getDestination } from "@/util/getDestination";
-import { NextRequest, NextResponse } from "next/server";
 import { produceAnalyticsMessage } from "@/util/kafka";
+import { getAnalyticsRedisClient } from "@/util/redis";
+import { NextRequest } from "next/server";
 
 export const config = {
   runtime: "edge",
 };
 
-export default async function handler(req: NextRequest, res: NextResponse) {
+export default async function handler(req: NextRequest) {
   const { pathname: path } = new URL(req.url);
   const route = await getDestination(path);
 
