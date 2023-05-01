@@ -1,5 +1,5 @@
 import { getAnalyticsRedisClient } from "@/util/redis";
-import { getDestination } from "@/util/routes";
+import { getDestination } from "@/util/getDestination";
 import { NextRequest, NextResponse } from "next/server";
 
 export const config = {

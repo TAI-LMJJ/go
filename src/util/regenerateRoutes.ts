@@ -14,14 +14,6 @@ const routeEntrySchema = z
 const reservedRoutes = ["/", "/refresh", "/favicon.ico"];
 
 /**
- * Get the destination route for a given path
- */
-export async function getDestination(path: string): Promise<string | null> {
-  const redis = await getRedisClient();
-  return await redis.get<string>(path);
-}
-
-/**
  * Regenerate routes on Redis
  */
 export async function regenerateRoutes(): Promise<void> {
