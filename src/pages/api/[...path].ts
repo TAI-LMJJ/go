@@ -1,6 +1,7 @@
 import { getAnalyticsRedisClient } from "@/util/redis";
 import { getDestination } from "@/util/getDestination";
 import { NextRequest, NextResponse } from "next/server";
+import { produceAnalyticsMessage } from "@/util/kafka";
 
 export const config = {
   runtime: "edge",
@@ -15,6 +16,7 @@ export default async function handler(req: NextRequest, res: NextResponse) {
     const analyticsClient = getAnalyticsRedisClient();
     await analyticsClient.incr(path);
 
+    // Track analytics
     const message = {
       country: req.geo?.country,
       city: req.geo?.city,
@@ -26,9 +28,10 @@ export default async function handler(req: NextRequest, res: NextResponse) {
       useragent: req.headers.get("user-agent"),
     };
 
-    console.log("Message", message);
+    // Publish to kafka
+    const analyticsMessage = JSON.stringify(message);
+    await produceAnalyticsMessage(analyticsMessage);
 
-    // res.redirect(route);
     return Response.redirect(route);
   } else {
     return new Response(JSON.stringify({ message: `Unknown route: ${path}` }), {
