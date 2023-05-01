@@ -1,4 +1,4 @@
-import { regenerateRoutes } from "@/util/routes";
+import { regenerateRoutes } from "@/util/regenerateRoutes";
 import type { NextApiRequest, NextApiResponse } from "next";
 
 /**
