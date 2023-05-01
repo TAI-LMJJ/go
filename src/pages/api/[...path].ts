@@ -28,6 +28,12 @@ export default async function handler(req: NextRequest) {
       useragent: req.headers.get("user-agent"),
     };
 
+    const headers: [string, string][] = [];
+    for (const header of req.headers) {
+      headers.push(header);
+    }
+    console.log(headers)
+
     // Publish to kafka
     const analyticsMessage = JSON.stringify(message);
     await produceAnalyticsMessage(analyticsMessage);
