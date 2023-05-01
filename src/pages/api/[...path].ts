@@ -32,7 +32,8 @@ export default async function handler(req: NextRequest) {
     for (const header of req.headers) {
       headers.push(header);
     }
-    console.log(headers)
+    console.log(headers);
+    console.log(req.geo);
 
     // Publish to kafka
     const analyticsMessage = JSON.stringify(message);
