@@ -1,7 +1,7 @@
 import { env } from "@/env";
 import { Kafka } from "@upstash/kafka";
 
-export const ANALYTICS_TOPIC = "analytics";
+export const ANALYTICS_TOPIC = "route_analytics";
 
 /**
  * Get the instantiated kafka client
